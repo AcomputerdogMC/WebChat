@@ -19,6 +19,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Spigot-1.9" level="application" />
+    <orderEntry type="library" name="spigot-1.10" level="application" />
   </component>
 </module>
