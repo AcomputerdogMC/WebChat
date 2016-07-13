@@ -1,0 +1,25 @@
+0.7.0 (1/19/16):
+    * Fix flashing chat
+0.6.0 (1/10/16):
+    * Add "0" before <10 time units
+0.5.0 (1/10/16):
+    * Fix using 12-hour time
+0.4.1 (1/10/16):
+    + Add chat time to web chat messages
+0.4.0 (1/10/16):
+    * Redesign chat reloading
+    * Fix urlencoded chat
+    + Web chat now shows up in chat list
+0.3.1 (1/10/16):
+    * Fix not updating time
+    * Fix not refreshing page
+0.3.0 (1/10/16):
+    + Add time to recorded chat
+    + Add current time to chat display
+    + Chat updates automatically
+0.2.0 (1/10/16):
+    + Add support for only rebuilding page if chat changed
+    * Fix box in corner of screen
+    * Trim extra code from web pages
+0.1.0 (1/10/16):
+    + First release

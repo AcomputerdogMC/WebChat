@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .chatcontainer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 50px;
+            border: 2px solid grey;
+        }
+
+        .chatframe {
+            border: none;
+            min-width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .input_span {
+            display: table-cell;
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            right: 0;
+            padding-right: 115px;
+        }
+
+        .input_text {
+            height: 100%;
+            width: 100%;
+        }
+
+        .input_button {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            width: 75px;
+        }
+
+        .hiddenframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    var selected = 1;
+    function refreshChat() {
+        var frame1 = document.getElementById("chat_frame_1");
+        var frame2 = document.getElementById("chat_frame_2");
+        if (selected == 1) {
+            frame2.src += '';
+            window.setTimeout(function () {
+                frame2.display = 'inline';
+                frame1.display = 'none';
+            }, 500);
+            selected = 0;
+        } else {
+            frame1.src += '';
+            window.setTimeout(function () {
+                frame1.display = 'inline';
+                frame2.display = 'none';
+            }, 500);
+            selected = 1;
+        }
+    }
+    window.setInterval(refreshChat, 1000);
+
+</script>
+<iframe id="hidden" name="hidden" class="hiddenframe"></iframe>
+<div class="chatcontainer">
+    <iframe class="chatframe" id="chat_frame_1" name="chat_frame_1" src="chat.html"></iframe>
+    <iframe class="chatframe" style="display: none" id="chat_frame_2" name="chat_frame_2" src="chat.html"></iframe>
+</div>
+<form action="send.html" method="post" target="hidden">
+    <table>
+        <tr>
+            <td>
+                        <span class="input_span">
+                            <input type="text" name="message" id="message" maxlength="100" class="input_text"/>
+                        </span>
+
+            </td>
+            <td>
+                <input type="submit" value="Send" class="input_button"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
