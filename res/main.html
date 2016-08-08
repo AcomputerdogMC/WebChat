@@ -77,7 +77,7 @@
 
     function updateChat(response) {
         var chatbox = document.getElementById("chatbox");
-        chatbox.value = chat;
+        chatbox.value = response;
 
         //set timeout for next chat query
         chatTimer = window.setTimeout(refreshChat, 1000);
@@ -95,8 +95,8 @@
     }
 
     function onPost() {
-        clearInterval(chatTimer);
-        refreshChat();
+        clearTimeout(chatTimer);
+        setTimeout(refreshChat, 100);
         return true;
     }
 
