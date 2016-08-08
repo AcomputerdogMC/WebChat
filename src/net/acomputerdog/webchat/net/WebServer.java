@@ -33,8 +33,8 @@ public class WebServer {
         SimpleHandler main = new SimpleHandler(this, getClass().getResourceAsStream("/main.html"));
         server.createContext("/", main);
         server.createContext("/main.html", main);
-        server.createContext("/chat.html", new ChatHandler(this, plugin));
-        server.createContext("/send.html", new SendHandler(this, plugin.getServer(), logger, plugin));
+        server.createContext("/chat", new ChatHandler(this, plugin));
+        server.createContext("/send", new SendHandler(this, plugin.getServer(), logger, plugin));
     }
 
     public void stop() {

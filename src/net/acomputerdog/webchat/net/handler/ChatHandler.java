@@ -19,36 +19,15 @@ public class ChatHandler extends WebHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleExchange(HttpExchange exchange) throws IOException {
         ChatList chat = plugin.getChatList();
         int version = chat.getVersion();
-        if (page == null || lastVersion < version) { //only rebuild if page changes
+        if (page == null || lastVersion != version) { //only rebuild if page changes
             StringBuilder builder = new StringBuilder();
-            builder.append("<!DOCTYPE html>\n");
-            //builder.append("<meta http-equiv=\"refresh\" content=\"1\" />\n");
-            builder.append("<meta http-Equiv=\"Cache-Control\" Content=\"no-cache\" />");
-            builder.append("<meta http-Equiv=\"Pragma\" Content=\"no-cache\" />");
-            builder.append("<meta http-Equiv=\"Expires\" Content=\"0\" />");
-            builder.append("<head>\n");
-            builder.append("<style>\n");
-            builder.append("p {\n");
-            builder.append("margin: 0;\n");
-            builder.append("padding: 0;\n");
-            builder.append("font-size: 100%;\n");
-            builder.append("</style>\n");
-            builder.append("</head>\n");
-            builder.append("<body>\n");
-            builder.append("<p>\n");
-            builder.append("<span style=\"font-style: italic;\">\n");
-            builder.append("Current server time: $$$");
-            builder.append("\n</span>\n");
-            builder.append("<br>\n<br>\n");
             chat.forEach(line -> {
                 builder.append(line);
-                builder.append("\n<br>\n");
+                builder.append("\n");
             });
-            builder.append("</p>\n");
-            builder.append("</body>\n");
 
             page = builder.toString();
             lastVersion = version;

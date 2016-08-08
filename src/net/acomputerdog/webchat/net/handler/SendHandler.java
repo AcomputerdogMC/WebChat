@@ -24,14 +24,14 @@ public class SendHandler extends WebHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleExchange(HttpExchange exchange) throws IOException {
         try {
             if (!exchange.getRequestMethod().equals("POST")) {
-                sendResponse(exchange, "<p>405 Method not allowed: only POST is accepted</p>", 405);
+                sendResponse(exchange, "<p>405 Method not allowed: only POST is accepted.</p>", 405);
                 return;
             }
             if (!"application/x-www-form-urlencoded".equals(exchange.getRequestHeaders().get("Content-Type").get(0))) {
-                sendResponse(exchange, "<p>406 Not acceptable: wrong Content-Type</p>", 406);
+                sendResponse(exchange, "<p>406 Not acceptable: wrong Content-Type.</p>", 406);
                 return;
             }
             InputStream body = exchange.getRequestBody();
@@ -40,7 +40,7 @@ public class SendHandler extends WebHandler {
 
             String[] parts = message.split("&");
             if (parts.length == 0) {
-                sendResponse(exchange, "<p>422 Unprocessable Entity: Missing required field \"message\"</p>", 422);
+                sendResponse(exchange, "<p>422 Unprocessable Entity: Missing required field \"message\".</p>", 422);
                 return;
             }
             if (parts.length > 1) {
@@ -48,18 +48,18 @@ public class SendHandler extends WebHandler {
             }
             String[] messageParts = parts[0].split("=");
             if (messageParts.length != 2) {
-                sendResponse(exchange, "<p>400 Malformed request: malformed field</p>", 400);
+                sendResponse(exchange, "<p>400 Malformed request: malformed field.</p>", 400);
                 return;
             }
             String chatEncoded = messageParts[1];
             String chatDecoded = URLDecoder.decode(chatEncoded, "UTF-8");
             server.broadcastMessage("<" + ChatColor.GREEN + "WEB" + ChatColor.WHITE + "> " + chatDecoded); //send to players
             plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][WEB] " + chatDecoded); //add to chat list
-            sendResponse(exchange, "<p>200 OK: message sent</p>");
+            sendResponse(exchange, "<p>200 OK: message sent.</p>");
         } catch (Exception e) {
             logger.warning("Exception processing request!");
             e.printStackTrace();
-            sendErrorResponse(exchange, "<p>500 Internal server error: An exception occurred processing the request</p>");
+            sendErrorResponse(exchange, "<p>500 Internal server error: An exception occurred processing the request.</p>");
         }
     }
 }

@@ -17,8 +17,23 @@ public abstract class WebHandler implements HttpHandler {
         return server;
     }
 
+    public abstract void handleExchange(HttpExchange exchange) throws IOException;
+
     @Override
-    public abstract void handle(HttpExchange exchange) throws IOException;
+    public final void handle(HttpExchange exchange) throws IOException {
+        try {
+            handleExchange(exchange);
+        } catch (Exception e) {
+            System.err.println("Exception occurred handling HttpExchange!");
+            e.printStackTrace();
+        }
+        try {
+            //read any left over data
+            readMessage(exchange.getRequestBody());
+        } catch (IOException ignored) {
+        }
+        exchange.close();
+    }
 
     protected void sendResponse(HttpExchange exchange, String response) throws IOException {
         sendResponse(exchange, response, 200);
@@ -45,10 +60,11 @@ public abstract class WebHandler implements HttpHandler {
 
     protected String readMessage(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        Reader reader = new InputStreamReader(in, "utf-8");
         while (reader.ready()) {
-            builder.append(reader.readLine());
-            builder.append("\n");
+            builder.append((char) reader.read());
+            //builder.append(reader.readLine());
+            //builder.append("\n");
         }
         return builder.toString();
     }

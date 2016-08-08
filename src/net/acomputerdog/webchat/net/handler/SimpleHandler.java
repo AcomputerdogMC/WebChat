@@ -28,7 +28,7 @@ public class SimpleHandler extends WebHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handleExchange(HttpExchange exchange) throws IOException {
         sendResponse(exchange, getPage());
     }
 
