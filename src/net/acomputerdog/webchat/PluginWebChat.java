@@ -5,6 +5,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -58,12 +62,45 @@ public class PluginWebChat extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
-        String line = "[" + getFormattedTime() + "][" +
-                e.getPlayer().getName() +
-                "] " +
-                e.getMessage();
+        addMessage(e.getPlayer().getName(), e.getMessage());
+    }
 
-        chatList.addLine(line);
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerLogin(PlayerJoinEvent e) {
+        addMessage(null, e.getPlayer().getName() + " joined.");
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        addMessage(null, e.getPlayer().getName() + " quit.");
+    }
+
+    /*
+    Handles /say (from console)
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onServerCommand(ServerCommandEvent e) {
+        String command = e.getCommand();
+        if (getCommandName(command).toLowerCase().startsWith("say")) {
+            String args = getCommandArgs(command);
+            if (args != null && !args.isEmpty()) {
+                addMessage("SERVER", args);
+            }
+        }
+    }
+
+    /*
+    Handles /me (from players)
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
+        String command = e.getMessage();//getCommand();
+        if (getCommandName(command).toLowerCase().startsWith("/me")) {
+            String args = getCommandArgs(command);
+            if (args != null && !args.isEmpty()) {
+                addMessage(e.getPlayer().getName(), "* " + e.getPlayer().getName() + " " + args);
+            }
+        }
     }
 
     private void stopServer() {
@@ -79,6 +116,25 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         return chatList;
     }
 
+    private void addMessage(String name, String message) {
+        StringBuilder builder = new StringBuilder(6);
+        builder.append('[');
+        builder.append(getFormattedTime());
+        if (name != null) {
+            builder.append("][");
+            builder.append(name);
+        }
+        builder.append("] ");
+        builder.append(message);
+        /*
+        String line = "[" + getFormattedTime() + "][" +
+                name +
+                "] " +
+                message;
+        */
+        chatList.addLine(builder.toString());
+    }
+
     public String getFormattedTime() {
         date.setTime(System.currentTimeMillis());
         calendar.setTime(date);
@@ -91,5 +147,35 @@ public class PluginWebChat extends JavaPlugin implements Listener {
             str = "0" + str;
         }
         return str;
+    }
+
+    private String getCommandName(String command) {
+        if (command == null) {
+            return null;
+        }
+        if (command.isEmpty()) {
+            return "";
+        }
+        int idx = command.indexOf(' ');
+        if (idx > 0) {
+            return command.substring(0, idx);
+        } else {
+            return command;
+        }
+    }
+
+    private String getCommandArgs(String command) {
+        if (command == null) {
+            return null;
+        }
+        if (command.isEmpty()) {
+            return "";
+        }
+        int idx = command.indexOf(' ');
+        if (idx > 0 && idx < command.length() - 1) {
+            return command.substring(idx + 1, command.length());
+        } else {
+            return null;
+        }
     }
 }
