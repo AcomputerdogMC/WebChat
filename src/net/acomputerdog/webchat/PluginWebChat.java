@@ -76,30 +76,51 @@ public class PluginWebChat extends JavaPlugin implements Listener {
     }
 
     /*
-    Handles /say (from console)
+    Handles console commands
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onServerCommand(ServerCommandEvent e) {
         String command = e.getCommand();
-        if (getCommandName(command).toLowerCase().startsWith("say")) {
-            String args = getCommandArgs(command);
-            if (args != null && !args.isEmpty()) {
-                addMessage("SERVER", args);
-            }
+        String cmdName = getCommandName(command).toLowerCase();
+        if (cmdName.equals("say")) {
+            handleSay("SERVER", command);
+        } else if (cmdName.equals("me")) {
+            handleMe("SERVER", command);
         }
     }
 
     /*
-    Handles /me (from players)
+    Handles player commands
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         String command = e.getMessage();//getCommand();
-        if (getCommandName(command).toLowerCase().startsWith("/me")) {
-            String args = getCommandArgs(command);
-            if (args != null && !args.isEmpty()) {
-                addMessage(e.getPlayer().getName(), "* " + e.getPlayer().getName() + " " + args);
-            }
+        String cmdName = getCommandName(command).toLowerCase();
+        String playerName = e.getPlayer().getName();
+        if (cmdName.equals("/say")) {
+            handleSay(playerName, command);
+        } else if (cmdName.equals("/me")) {
+            handleMe(playerName, command);
+        }
+    }
+
+    /*
+    Parses the text of a /me command
+     */
+    private void handleMe(String name, String command) {
+        String args = getCommandArgs(command);
+        if (args != null && !args.isEmpty()) {
+            addMessage(name, "* " + name + " " + args);
+        }
+    }
+
+    /*
+    Parses the text of a /say command
+     */
+    private void handleSay(String name, String command) {
+        String args = getCommandArgs(command);
+        if (args != null && !args.isEmpty()) {
+            addMessage(name, args);
         }
     }
 

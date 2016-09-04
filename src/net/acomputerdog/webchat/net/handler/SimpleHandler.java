@@ -33,10 +33,6 @@ public class SimpleHandler extends WebHandler {
             sendResponse(exchange, "405 Method not allowed: only GET is accepted.", 405);
             return;
         }
-        sendResponse(exchange, getPage());
-    }
-
-    private String getPage() {
-        return page;
+        sendResponse(exchange, page);
     }
 }

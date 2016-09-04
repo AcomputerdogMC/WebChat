@@ -24,7 +24,7 @@ public abstract class WebHandler implements HttpHandler {
         try {
             handleExchange(exchange);
         } catch (Exception e) {
-            System.err.println("Exception occurred handling HttpExchange!");
+            server.getLogger().severe("Exception occurred handling HttpExchange!");
             e.printStackTrace();
         }
         try {
@@ -63,8 +63,6 @@ public abstract class WebHandler implements HttpHandler {
         Reader reader = new InputStreamReader(in, "utf-8");
         while (reader.ready()) {
             builder.append((char) reader.read());
-            //builder.append(reader.readLine());
-            //builder.append("\n");
         }
         return builder.toString();
     }
