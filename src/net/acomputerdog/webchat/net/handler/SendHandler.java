@@ -63,8 +63,14 @@ public class SendHandler extends WebHandler {
         }
     }
 
-    private void addChat(InetSocketAddress addr, String line) {
-        server.broadcastMessage("<" + ChatColor.GREEN + String.valueOf(addr.getAddress().toString()) + ChatColor.WHITE + "> " + line); //send to players
-        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + String.valueOf(addr.getAddress().toString()) + "] " + line); //add to chat list
+    private void addChat(InetSocketAddress addr, String decoded) {
+        String line = filterChat(decoded);
+        server.broadcastMessage("<" + ChatColor.GREEN + String.valueOf(addr.getAddress().getHostAddress()) + ChatColor.WHITE + "> " + line); //send to players
+        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + String.valueOf(addr.getAddress().getHostAddress()) + "] " + line); //add to chat list
+    }
+
+    private String filterChat(String decoded) {
+        String line = decoded.replace('§', '&');
+        return line;
     }
 }
