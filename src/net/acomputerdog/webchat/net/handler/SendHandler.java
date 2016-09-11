@@ -8,6 +8,7 @@ import org.bukkit.Server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.logging.Logger;
 
@@ -53,13 +54,17 @@ public class SendHandler extends WebHandler {
             }
             String chatEncoded = messageParts[1];
             String chatDecoded = URLDecoder.decode(chatEncoded, "UTF-8");
-            server.broadcastMessage("<" + ChatColor.GREEN + "WEB" + ChatColor.WHITE + "> " + chatDecoded); //send to players
-            plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][WEB] " + chatDecoded); //add to chat list
+            addChat(exchange.getRemoteAddress(), chatDecoded);
             sendResponse(exchange, "<p>200 OK: message sent.</p>");
         } catch (Exception e) {
             logger.warning("Exception processing request!");
             e.printStackTrace();
             sendErrorResponse(exchange, "<p>500 Internal server error: An exception occurred processing the request.</p>");
         }
+    }
+
+    private void addChat(InetSocketAddress addr, String line) {
+        server.broadcastMessage("<" + ChatColor.GREEN + String.valueOf(addr.getAddress().toString()) + ChatColor.WHITE + "> " + line); //send to players
+        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + String.valueOf(addr.getAddress().toString()) + "] " + line); //add to chat list
     }
 }
