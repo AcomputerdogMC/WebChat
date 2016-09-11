@@ -52,10 +52,14 @@ public abstract class WebHandler implements HttpHandler {
     }
 
     protected void sendResponse(HttpExchange exchange, String response, int code) throws IOException {
-        exchange.sendResponseHeaders(code, response.getBytes().length);
-        Writer writer = new OutputStreamWriter(exchange.getResponseBody());
-        writer.write(response);
-        writer.close();
+        if (exchange.getRequestMethod().equals("GET") || exchange.getRequestMethod().equals("POST")) {
+            exchange.sendResponseHeaders(code, response.getBytes().length);
+            Writer writer = new OutputStreamWriter(exchange.getResponseBody());
+            writer.write(response);
+            writer.close();
+        } else {
+            exchange.sendResponseHeaders(code, 0);
+        }
     }
 
     protected String readMessage(InputStream in) throws IOException {
