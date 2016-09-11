@@ -95,6 +95,9 @@
     }
 
     function onPost() {
+        setTimeout(function () {
+            document.getElementById("message").value = ""
+        }, 100);
         clearTimeout(chatTimer);
         setTimeout(refreshChat, 100);
         return true;
