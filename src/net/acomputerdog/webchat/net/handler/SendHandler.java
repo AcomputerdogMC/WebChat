@@ -65,12 +65,17 @@ public class SendHandler extends WebHandler {
 
     private void addChat(InetSocketAddress addr, String decoded) {
         String line = filterChat(decoded);
-        server.broadcastMessage("<" + ChatColor.GREEN + String.valueOf(addr.getAddress().getHostAddress()) + ChatColor.WHITE + "> " + line); //send to players
-        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + String.valueOf(addr.getAddress().getHostAddress()) + "] " + line); //add to chat list
+        String ip = hashIP(addr.getAddress().getHostAddress());
+        server.broadcastMessage("<" + ChatColor.GREEN + ip + ChatColor.WHITE + "> " + line); //send to players
+        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + ip + "] " + line); //add to chat list
     }
 
     private String filterChat(String decoded) {
         String line = decoded.replace('§', '&');
         return line;
+    }
+
+    private String hashIP(String addr) {
+        return Integer.toHexString(addr.hashCode()).toUpperCase();
     }
 }
