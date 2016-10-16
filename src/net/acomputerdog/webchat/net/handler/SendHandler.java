@@ -78,6 +78,6 @@ public class SendHandler extends WebHandler {
     }
 
     private String hashIP(String addr) {
-        return Integer.toHexString(addr.hashCode()).toUpperCase();
+        return "WEB/" + Integer.toHexString(addr.hashCode()).toUpperCase();
     }
 }
