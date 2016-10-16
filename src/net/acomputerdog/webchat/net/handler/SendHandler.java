@@ -65,7 +65,9 @@ public class SendHandler extends WebHandler {
 
     private void addChat(InetSocketAddress addr, String decoded) {
         String line = filterChat(decoded);
-        String ip = hashIP(addr.getAddress().getHostAddress());
+        String address = addr.getAddress().getHostAddress();
+        String ip = hashIP(address);
+        plugin.getLogger().info("[chat][" + address + "/" + ip + "] " + line);
         server.broadcastMessage("<" + ChatColor.GREEN + ip + ChatColor.WHITE + "> " + line); //send to players
         plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + ip + "] " + line); //add to chat list
     }
