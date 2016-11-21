@@ -110,8 +110,8 @@ public class SendHandler extends WebHandler {
 
     private String filterChat(String decoded) {
         String line = decoded;
-        if (line.length() > 32760) {
-            line = line.substring(0, 32760);
+        if (line.length() > 256) {
+            line = line.substring(0, 256);
         }
         line = line.replace('§', '&');
         return line;
