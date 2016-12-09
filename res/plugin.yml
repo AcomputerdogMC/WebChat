@@ -1,5 +1,5 @@
 name: WebChat
-version: 0.10.4
+version: 0.10.5
 description: Opens a web server for remote chat access
 author: acomputerdog
 main: net.acomputerdog.webchat.PluginWebChat
