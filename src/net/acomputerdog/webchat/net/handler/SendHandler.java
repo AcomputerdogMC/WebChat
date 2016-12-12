@@ -95,7 +95,7 @@ public class SendHandler extends WebHandler {
         String line = filterChat(decoded);
         String address = addr.getAddress().getHostAddress();
         String ip = hashIP(address);
-        plugin.getLogger().info("[chat][" + address + "/" + ip + "] " + line);
+        plugin.getLogger().info("[" + address + "/" + ip + "] " + line);
         server.broadcastMessage("<" + ChatColor.GREEN + ip + ChatColor.WHITE + "> " + line); //send to players
         plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + ip + "] " + line); //add to chat list
     }
@@ -109,8 +109,12 @@ public class SendHandler extends WebHandler {
         return line;
     }
 
+    private String formatIP(String addr) {
+        return "WEB/" + hashIP(addr);
+    }
+
     private String hashIP(String addr) {
-        return "WEB/" + Integer.toHexString(addr.hashCode()).toUpperCase();
+        return Integer.toHexString(addr.hashCode()).toUpperCase();
     }
 
     private class Timeout {
