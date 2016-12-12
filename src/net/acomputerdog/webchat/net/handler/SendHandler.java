@@ -92,7 +92,7 @@ public class SendHandler extends WebHandler {
         if (timeout != null && !timeout.finished) {
             canSend = false;
         } else {
-            timeout = new Timeout(PluginWebChat.CHAT_DELAY);
+            timeout = new Timeout(plugin.chatDelay);
             timeouts.put(addr, timeout);
         }
 

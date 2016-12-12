@@ -10,8 +10,8 @@ public class ChatList {
 
     private int version;
 
-    public ChatList() {
-        lines = new WrappingArray<>(PluginWebChat.MAX_LINES);
+    public ChatList(PluginWebChat plugin) {
+        lines = new WrappingArray<>(plugin.maxLines);
         lock = new Object();
         version = 0;
     }

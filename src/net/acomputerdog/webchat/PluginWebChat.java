@@ -20,8 +20,9 @@ public class PluginWebChat extends JavaPlugin implements Listener {
     /*
     Delay in milliseconds between chat messages
      */
-    public static int CHAT_DELAY = 750;
-    public static int MAX_LINES = 50;
+    public int chatDelay = 750;
+    public int maxLines = 50;
+    public int webPort = 8080;
 
     private WebServer webServer;
     private ChatList chatList;
@@ -30,6 +31,8 @@ public class PluginWebChat extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        loadConfig();
+
         date = new Date();
         chatList = new ChatList();
         calendar = Calendar.getInstance();
@@ -58,6 +61,14 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         chatList = null;
         date = null;
         calendar = null;
+    }
+
+    private void loadConfig() {
+        saveDefaultConfig(); //only saves if it doesn't exist
+
+        chatDelay = getConfig().getInt("chat_delay", chatDelay);
+        maxLines = getConfig().getInt("max_lines", maxLines);
+        webPort = getConfig().getInt("web_port", webPort);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

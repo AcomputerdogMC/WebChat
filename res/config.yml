@@ -1,0 +1,10 @@
+# Webchat configuration file version 1
+
+# Port for the web server to listen on
+web_port: 8080
+
+# Number of lines to remember
+max_lines: 50
+
+# Minimum delay between chat messages from the same user
+chat_delay: 750
