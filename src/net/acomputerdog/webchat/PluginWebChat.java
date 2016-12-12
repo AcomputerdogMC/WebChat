@@ -34,7 +34,7 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         loadConfig();
 
         date = new Date();
-        chatList = new ChatList();
+        chatList = new ChatList(this);
         calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("EST"));
 
