@@ -2,9 +2,7 @@ package net.acomputerdog.webchat.net;
 
 import com.sun.net.httpserver.HttpServer;
 import net.acomputerdog.webchat.PluginWebChat;
-import net.acomputerdog.webchat.net.handler.ChatHandler;
-import net.acomputerdog.webchat.net.handler.SendHandler;
-import net.acomputerdog.webchat.net.handler.SimpleHandler;
+import net.acomputerdog.webchat.net.handler.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -38,6 +36,8 @@ public class WebServer {
         server.createContext("/", main);
         server.createContext("/main.html", main);
         server.createContext("/chat", new ChatHandler(this, plugin));
+        server.createContext("/updatechat", new ChatUpdateHandler(this, plugin));
+        server.createContext("/chatversion", new ChatVersionHandler(this, plugin));
         server.createContext("/send", new SendHandler(this, plugin.getServer(), logger, plugin));
     }
 

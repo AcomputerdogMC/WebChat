@@ -158,12 +158,6 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         }
         builder.append("] ");
         builder.append(message);
-        /*
-        String line = "[" + getFormattedTime() + "][" +
-                name +
-                "] " +
-                message;
-        */
         chatList.addLine(builder.toString());
     }
 

@@ -72,25 +72,50 @@
 </head>
 <body>
 <script type="text/javascript">
+    var DEFAULT_TIMEOUT = 1000;
+    var MAX_TIMEOUT = 5000;
+    var TIMEOUT_INCREASE = 100;
 
     var chatTimer;
+    var version = 0;
+    var timeout = DEFAULT_TIMEOUT;
 
     function updateChat(response) {
         var chatbox = document.getElementById("chatbox");
         chatbox.value = response;
+    }
 
-        //set timeout for next chat query
-        chatTimer = window.setTimeout(refreshChat, 1000);
+    function buildRequestURL() {
+        return "updatechat" + "?version=" + version;
     }
 
     function refreshChat() {
         var http = new XMLHttpRequest();
         http.onreadystatechange = function () {
-            if (http.readyState == 4 && http.status == 200) {
-                updateChat(http.responseText)
+            if (http.readyState == 4) {
+                if (http.status == 200) {
+                    timeout = DEFAULT_TIMEOUT;
+                    updateChat(http.responseText);
+                    refreshVersion();
+                } else if (timeout < MAX_TIMEOUT) {
+                    timeout += TIMEOUT_INCREASE;
+                }
+                //set timeout for next chat query
+                chatTimer = window.setTimeout(refreshChat, timeout);
             }
         };
-        http.open("GET", "chat", true); // true for asynchronous
+        http.open("GET", buildRequestURL(), true); // true for asynchronous
+        http.send();
+    }
+
+    function refreshVersion() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (http.readyState == 4 && http.status == 200) {
+                version = http.responseText;
+            }
+        };
+        http.open("GET", "chatversion", true);
         http.send();
     }
 
@@ -103,6 +128,7 @@
         return true;
     }
 
+    //start everything going
     refreshChat();
 </script>
 <iframe id="hidden" name="hidden" class="hiddenframe"></iframe>

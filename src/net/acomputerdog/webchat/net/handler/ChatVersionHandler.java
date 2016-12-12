@@ -7,13 +7,10 @@ import net.acomputerdog.webchat.net.WebServer;
 
 import java.io.IOException;
 
-@Deprecated
-public class ChatHandler extends WebHandler {
+public class ChatVersionHandler extends WebHandler {
     private final PluginWebChat plugin;
-    private String page = null;
-    private int lastVersion = -1;
 
-    public ChatHandler(WebServer server, PluginWebChat plugin) {
+    public ChatVersionHandler(WebServer server, PluginWebChat plugin) {
         super(server);
         this.plugin = plugin;
     }
@@ -24,12 +21,8 @@ public class ChatHandler extends WebHandler {
             sendResponse(exchange, "405 Method not allowed: only GET is accepted.", 405);
             return;
         }
+
         ChatList chat = plugin.getChatList();
-        int version = chat.getVersion();
-        if (page == null || lastVersion != version) { //only rebuild if page changes
-            lastVersion = chat.getVersion();
-            page = chat.toString();
-        }
-        sendResponse(exchange, page);
+        sendResponse(exchange, String.valueOf(chat.getVersion()));
     }
 }

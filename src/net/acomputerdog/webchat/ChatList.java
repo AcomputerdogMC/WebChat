@@ -8,6 +8,7 @@ public class ChatList {
     private final WrappingArray<String> lines;
     private final Object lock;
 
+    //increments after every new chat message, can safely overflow to negative
     private int version;
 
     public ChatList(PluginWebChat plugin) {
@@ -19,6 +20,7 @@ public class ChatList {
     public void forEach(Consumer<String> consumer) {
         synchronized (lock) {
             for (String str : lines) {
+                //TODO look into this
                 if (str != null) {//workaround for bigger problem
                     consumer.accept(str);
                 }
@@ -52,6 +54,16 @@ public class ChatList {
                     builder.append(chr);//otherwise add
             }
         }
+        return builder.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        forEach(line -> {
+            builder.append(line);
+            builder.append("\n");
+        });
         return builder.toString();
     }
 }
