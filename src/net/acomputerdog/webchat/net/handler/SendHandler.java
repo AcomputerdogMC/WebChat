@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 
 public class SendHandler extends WebHandler {
@@ -20,12 +22,17 @@ public class SendHandler extends WebHandler {
     private final PluginWebChat plugin;
 
     private final Map<InetSocketAddress, Timeout> timeouts = new HashMap<>();
+    private final int salt; //random salt to be XORed with hashed IPs
 
     public SendHandler(WebServer server, Server mc, Logger logger, PluginWebChat plugin) {
         super(server);
         this.server = mc;
         this.logger = logger;
         this.plugin = plugin;
+
+        Random rand = new SecureRandom();
+        rand.setSeed(this.hashCode());
+        this.salt = rand.nextInt();
     }
 
     @Override
@@ -95,9 +102,10 @@ public class SendHandler extends WebHandler {
         String line = filterChat(decoded);
         String address = addr.getAddress().getHostAddress();
         String ip = hashIP(address);
+        String name = "WEB/" + ip;
         plugin.getLogger().info("[" + address + "/" + ip + "] " + line);
-        server.broadcastMessage("<" + ChatColor.GREEN + ip + ChatColor.WHITE + "> " + line); //send to players
-        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + ip + "] " + line); //add to chat list
+        server.broadcastMessage("<" + ChatColor.GREEN + name + ChatColor.WHITE + "> " + line); //send to players
+        plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + name + "] " + line); //add to chat list
     }
 
     private String filterChat(String decoded) {
@@ -109,12 +117,10 @@ public class SendHandler extends WebHandler {
         return line;
     }
 
-    private String formatIP(String addr) {
-        return "WEB/" + hashIP(addr);
-    }
-
     private String hashIP(String addr) {
-        return Integer.toHexString(addr.hashCode()).toUpperCase();
+        int hash = addr.hashCode();
+        hash = hash ^ salt;
+        return Integer.toHexString(hash).toUpperCase();
     }
 
     private class Timeout {
