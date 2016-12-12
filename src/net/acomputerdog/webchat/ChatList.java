@@ -2,42 +2,53 @@ package net.acomputerdog.webchat;
 
 import net.acomputerdog.webchat.util.BoundedSet;
 
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 
 public class ChatList {
     private final BoundedSet<String> lines;
-    private final Object lock;
+    private final Semaphore lock;
 
     //increments after every new chat message, can safely overflow to negative
     private int version;
 
     public ChatList(PluginWebChat plugin) {
         lines = new BoundedSet<>(plugin.maxLines);
-        lock = new Object();
+        lock = new Semaphore(1, true);
         version = 0;
     }
 
     public void forEach(Consumer<String> consumer) {
-        synchronized (lock) {
+        lock.acquireUninterruptibly();
+        try {
             for (String str : lines) {
                 consumer.accept(str);
             }
+        } finally {
+            lock.release();
         }
     }
 
     public void addLine(String line) {
         if (line != null) {
             line = filter(line);
-            synchronized (lock) {
+
+            lock.acquireUninterruptibly();
+            try {
                 lines.add(line);
                 version++;
+            } finally {
+                lock.release();
             }
         }
     }
 
     public int getVersion() {
-        synchronized (lock) {
+        lock.acquireUninterruptibly();
+        try {
             return version;
+        } finally {
+            lock.release();
         }
     }
 
