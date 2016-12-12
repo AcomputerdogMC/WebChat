@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -74,15 +73,8 @@ public class SendHandler extends WebHandler {
     }
 
     private void clearTimeouts() {
-        //this makes me uncomfortable
-        for (Iterator<Map.Entry<InetSocketAddress, Timeout>> iterator = timeouts.entrySet().iterator(); iterator.hasNext(); ) {
-            //loop through each entry in the set
-            Map.Entry<InetSocketAddress, Timeout> entry = iterator.next();
-            //if it has finished then remove it
-            if (entry.getValue().finished) {
-                iterator.remove();
-            }
-        }
+        //the glory of java 8
+        timeouts.entrySet().removeIf(entry -> entry.getValue().finished);
     }
 
     private boolean checkAndUpdateTimeout(InetSocketAddress addr) {

@@ -59,7 +59,6 @@ public abstract class WebHandler implements HttpHandler {
             writer.close();
         } else {
             exchange.close();
-            //exchange.sendResponseHeaders(code, 0);
         }
     }
 

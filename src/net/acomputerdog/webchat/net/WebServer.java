@@ -21,9 +21,9 @@ public class WebServer {
         this.logger = plugin.getLogger();
         //set timeouts.  Is either 10 or 100 seconds (unsure do to closed source/undocumented code)
         //should still set in JVM arguments
-        System.getProperties().setProperty("sun.net.httpserver.maxReqTime", "10");
-        System.getProperties().setProperty("sun.net.httpserver.maxRspTime", "10");
-        this.server = HttpServer.create(new InetSocketAddress(8080), 0);
+        System.setProperty("sun.net.httpserver.maxReqTime", "10");
+        System.setProperty("sun.net.httpserver.maxRspTime", "10");
+        this.server = HttpServer.create(new InetSocketAddress(plugin.webPort), 0);
         this.serverThread = new Thread(() -> {
             try {
                 server.start();
