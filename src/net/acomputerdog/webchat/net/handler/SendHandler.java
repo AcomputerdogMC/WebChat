@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import net.acomputerdog.webchat.PluginWebChat;
 import net.acomputerdog.webchat.net.WebServer;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,16 +16,14 @@ import java.util.Random;
 import java.util.logging.Logger;
 
 public class SendHandler extends WebHandler {
-    private final Server server;
     private final Logger logger;
     private final PluginWebChat plugin;
 
     private final Map<InetSocketAddress, Timeout> timeouts = new HashMap<>();
     private final int salt; //random salt to be XORed with hashed IPs
 
-    public SendHandler(WebServer server, Server mc, Logger logger, PluginWebChat plugin) {
+    public SendHandler(WebServer server, Logger logger, PluginWebChat plugin) {
         super(server);
-        this.server = mc;
         this.logger = logger;
         this.plugin = plugin;
 
@@ -99,22 +96,13 @@ public class SendHandler extends WebHandler {
     }
 
     private void addChat(InetSocketAddress addr, String decoded) {
-        String line = filterChat(decoded);
+        String line = plugin.getChatFilter().filterIncomingLine(decoded);
         String address = addr.getAddress().getHostAddress();
         String ip = hashIP(address);
         String name = "WEB/" + ip;
         plugin.getLogger().info("[" + address + "/" + ip + "] " + line);
-        server.broadcastMessage("<" + ChatColor.GREEN + name + ChatColor.WHITE + "> " + line); //send to players
+        plugin.getServer().broadcastMessage("<" + ChatColor.GREEN + name + ChatColor.WHITE + "> " + line); //send to players
         plugin.getChatList().addLine("[" + plugin.getFormattedTime() + "][" + name + "] " + line); //add to chat list
-    }
-
-    private String filterChat(String decoded) {
-        String line = decoded;
-        if (line.length() > 256) {
-            line = line.substring(0, 256);
-        }
-        line = line.replace('§', '&');
-        return line;
     }
 
     private String hashIP(String addr) {

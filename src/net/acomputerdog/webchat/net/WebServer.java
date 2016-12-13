@@ -38,7 +38,7 @@ public class WebServer {
         server.createContext("/chat", new ChatHandler(this, plugin));
         server.createContext("/updatechat", new ChatUpdateHandler(this, plugin));
         server.createContext("/chatversion", new ChatVersionHandler(this, plugin));
-        server.createContext("/send", new SendHandler(this, plugin.getServer(), logger, plugin));
+        server.createContext("/send", new SendHandler(this, logger, plugin));
     }
 
     public void stop() {

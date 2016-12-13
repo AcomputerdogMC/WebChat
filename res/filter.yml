@@ -1,0 +1,25 @@
+# Chat filter configuration version 1
+
+# If true, the word filter will apply to chat coming from web to server
+filter_in: true
+
+# If true, the word filter will also apply to chat being sent from the server to the web
+filter_out: true
+
+# If true, the entire word will be blocked out instead of leaving the last character
+strict_filter: false
+
+# If true, section signs will be removed from chat messages
+strip_section_signs: true
+
+# If true, the length of a line will be limited to the value below
+limit_line_length: true
+
+# Maximum length of a line of chat
+max_line_length: 256
+
+# Regexes that will be applied to the chat as filters
+regex_filters: []
+
+# These are strings that will be literally matched and filtered
+quote_filters: []

@@ -1,6 +1,10 @@
 package net.acomputerdog.webchat;
 
+import net.acomputerdog.webchat.chat.ChatFilter;
+import net.acomputerdog.webchat.chat.ChatList;
 import net.acomputerdog.webchat.net.WebServer;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,28 +33,35 @@ public class PluginWebChat extends JavaPlugin implements Listener {
     private ChatList chatList;
     private Date date;
     private Calendar calendar;
+    private ChatFilter chatFilter;
 
     @Override
     public void onEnable() {
-        loadConfig();
-
-        date = new Date();
-        chatList = new ChatList(this);
-        calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getTimeZone("EST"));
-
-        getLogger().info("Starting web server...");
         try {
-            webServer = new WebServer(this);
-            webServer.start();
-        } catch (IOException e) {
-            getLogger().severe("Exception starting web server!");
-            e.printStackTrace();
-            stopServer();
-        }
-        getLogger().info("Server started.");
+            loadConfig();
 
-        getServer().getPluginManager().registerEvents(this, this);
+            date = new Date();
+            chatList = new ChatList(this);
+            calendar = Calendar.getInstance();
+            calendar.setTimeZone(TimeZone.getTimeZone("EST"));
+
+            getLogger().info("Starting web server...");
+            try {
+                webServer = new WebServer(this);
+                webServer.start();
+            } catch (IOException e) {
+                getLogger().severe("Exception starting web server!");
+                e.printStackTrace();
+                stopServer();
+            }
+            getLogger().info("Server started.");
+
+            getServer().getPluginManager().registerEvents(this, this);
+        } catch (Exception e) {
+            getLogger().severe("Exception during startup!  Plugin will be disabled!");
+            e.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override
@@ -63,12 +75,17 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         calendar = null;
     }
 
-    private void loadConfig() {
+    private void loadConfig() throws IOException, InvalidConfigurationException {
         saveDefaultConfig(); //only saves if it doesn't exist
+        saveResource("filter.yml", false); //only saves if it doesn't exist
 
         chatDelay = getConfig().getInt("chat_delay", chatDelay);
         maxLines = getConfig().getInt("max_lines", maxLines);
         webPort = getConfig().getInt("web_port", webPort);
+
+        YamlConfiguration conf = new YamlConfiguration();
+        conf.load(new File(getDataFolder(), "filter.yml"));
+        chatFilter = new ChatFilter(this, conf);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -146,6 +163,10 @@ public class PluginWebChat extends JavaPlugin implements Listener {
 
     public ChatList getChatList() {
         return chatList;
+    }
+
+    public ChatFilter getChatFilter() {
+        return chatFilter;
     }
 
     private void addMessage(String name, String message) {

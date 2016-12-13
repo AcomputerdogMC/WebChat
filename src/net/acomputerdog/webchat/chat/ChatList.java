@@ -1,5 +1,6 @@
-package net.acomputerdog.webchat;
+package net.acomputerdog.webchat.chat;
 
+import net.acomputerdog.webchat.PluginWebChat;
 import net.acomputerdog.webchat.util.BoundedSet;
 
 import java.util.concurrent.Semaphore;
@@ -8,6 +9,7 @@ import java.util.function.Consumer;
 public class ChatList {
     private final BoundedSet<String> lines;
     private final Semaphore lock;
+    private final ChatFilter filter;
 
     //increments after every new chat message, can safely overflow to negative
     private int version;
@@ -15,6 +17,7 @@ public class ChatList {
     public ChatList(PluginWebChat plugin) {
         lines = new BoundedSet<>(plugin.maxLines);
         lock = new Semaphore(1, true);
+        filter = plugin.getChatFilter();
         version = 0;
     }
 
@@ -72,7 +75,7 @@ public class ChatList {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         forEach(line -> {
-            builder.append(line);
+            builder.append(filter.filterOutgoingLine(line));
             builder.append("\n");
         });
         return builder.toString();

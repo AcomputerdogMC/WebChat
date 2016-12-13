@@ -1,8 +1,8 @@
 package net.acomputerdog.webchat.net.handler;
 
 import com.sun.net.httpserver.HttpExchange;
-import net.acomputerdog.webchat.ChatList;
 import net.acomputerdog.webchat.PluginWebChat;
+import net.acomputerdog.webchat.chat.ChatList;
 import net.acomputerdog.webchat.net.WebServer;
 
 import java.io.IOException;

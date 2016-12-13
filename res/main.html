@@ -124,6 +124,7 @@
             document.getElementById("message").value = ""
         }, 100);
         clearTimeout(chatTimer);
+        timeout = DEFAULT_TIMEOUT;
         setTimeout(refreshChat, 100);
         return true;
     }
