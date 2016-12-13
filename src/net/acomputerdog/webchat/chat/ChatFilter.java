@@ -96,6 +96,6 @@ public class ChatFilter {
     }
 
     private String stripSectionSigns(String line) {
-        return line.replace('§', '&');
+        return line.replace('§', ' ');
     }
 }
