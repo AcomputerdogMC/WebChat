@@ -31,7 +31,7 @@ public class ChatFilter {
         List<String> patterns = conf.getStringList("regex_filters");
         List<String> quotes = conf.getStringList("quote_filters");
         for (String str : quotes) {
-            patterns.add(Pattern.quote(str));
+            patterns.add(".*\\b" + Pattern.quote(str) + "\\b.*");
         }
         filterPatterns = new Pattern[patterns.size()];
         for (int i = 0; i < patterns.size(); i++) {
