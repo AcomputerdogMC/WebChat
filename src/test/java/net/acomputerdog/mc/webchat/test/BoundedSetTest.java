@@ -1,4 +1,4 @@
-package net.acomputerdog.test;
+package net.acomputerdog.mc.webchat.test;
 
 import net.acomputerdog.webchat.util.BoundedSet;
 import org.junit.Before;
