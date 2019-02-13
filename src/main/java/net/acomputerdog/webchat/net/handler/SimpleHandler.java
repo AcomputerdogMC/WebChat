@@ -19,7 +19,7 @@ public class SimpleHandler extends WebHandler {
         super(server);
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(resource), StandardCharsets.UTF_8))) {
-            this.page = in.lines().collect(Collectors.joining());
+            this.page = in.lines().collect(Collectors.joining("\n"));
         }
     }
 
