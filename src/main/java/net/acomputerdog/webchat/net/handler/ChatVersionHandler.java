@@ -7,6 +7,9 @@ import net.acomputerdog.webchat.net.WebServer;
 
 import java.io.IOException;
 
+/**
+ * API endpoint that gets the "version" of the current chat list
+ */
 public class ChatVersionHandler extends WebHandler {
     private final PluginWebChat plugin;
 

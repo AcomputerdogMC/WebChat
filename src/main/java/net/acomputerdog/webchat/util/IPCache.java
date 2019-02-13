@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Records IP addresses of logged in players so that they can use their name from the web chat interface
+ *
+ * TODO replace with some kind of login system
+ */
 public class IPCache implements Listener {
     private final Map<String, IPEntry> ipNameMap;
     private final Map<UUID, String> uuidIpMap;
@@ -32,7 +37,7 @@ public class IPCache implements Listener {
             removeEntry(oldIp, e.getPlayer().getUniqueId());
         }
 
-        IPEntry entry = new IPEntry(ip, e.getPlayer().getUniqueId(), e.getPlayer().getName());
+        IPEntry entry = new IPEntry(ip, e.getPlayer().getUniqueId());
 
         uuidIpMap.put(e.getPlayer().getUniqueId(), ip);
         ipNameMap.put(ip, entry);
@@ -56,22 +61,16 @@ public class IPCache implements Listener {
         uuidIpMap.remove(uuid);
     }
 
-    private void invalidateEntry(IPEntry entry) {
-        removeEntry(entry.ip, entry.uuid);
-    }
-
     private class IPEntry implements Runnable {
-        private static final long ONE_DAY = 20 * 60 * 60 * 24;
+        private static final long ONE_DAY = 20L * 60L * 60L * 24L;
 
         private final String ip;
         private UUID uuid;
-        private String name;
         private int eventID;
 
-        private IPEntry(String ip, UUID uuid, String name) {
+        private IPEntry(String ip, UUID uuid) {
             this.ip = ip;
             this.uuid = uuid;
-            this.name = name;
             registerEvent();
         }
 
@@ -94,10 +93,14 @@ public class IPCache implements Listener {
         @Override
         public void run() {
             if (plugin.getServer().getPlayer(uuid) != null) {
-                invalidateEntry(this);
+                invalidate();
             } else {
                 registerEvent();
             }
+        }
+
+        private void invalidate() {
+            removeEntry(this.ip, this.uuid);
         }
     }
 }

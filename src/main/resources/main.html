@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en/us">
 <head>
+    <title>WebChat</title>
     <style>
         .chatcontainer {
 
@@ -92,8 +93,8 @@
     function refreshChat() {
         var http = new XMLHttpRequest();
         http.onreadystatechange = function () {
-            if (http.readyState == 4) {
-                if (http.status == 200) {
+            if (http.readyState === 4) {
+                if (http.status === 200) {
                     timeout = DEFAULT_TIMEOUT;
                     updateChat(http.responseText);
                     refreshVersion();
@@ -111,7 +112,7 @@
     function refreshVersion() {
         var http = new XMLHttpRequest();
         http.onreadystatechange = function () {
-            if (http.readyState == 4 && http.status == 200) {
+            if (http.readyState === 4 && http.status === 200) {
                 version = http.responseText;
             }
         };

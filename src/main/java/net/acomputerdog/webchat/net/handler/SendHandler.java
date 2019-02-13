@@ -6,20 +6,25 @@ import net.acomputerdog.webchat.net.WebServer;
 import org.bukkit.ChatColor;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * API endpoint that sends a chat message
+ */
 public class SendHandler extends WebHandler {
     private final Logger logger;
     private final PluginWebChat plugin;
 
     private final Map<InetSocketAddress, Timeout> timeouts = new HashMap<>();
+
+    //TODO no don't do that
     private final int salt; //random salt to be XORed with hashed IPs
 
     public SendHandler(WebServer server, Logger logger, PluginWebChat plugin) {
@@ -48,9 +53,7 @@ public class SendHandler extends WebHandler {
                 sendResponse(exchange, "<p>429 Too many requests: please wait to send multiple messages.</p>", 429);
                 return;
             }
-            InputStream body = exchange.getRequestBody();
-            String message = readMessage(body);
-            body.close();
+            String message = readBodyMessage(exchange);
 
             String[] parts = message.split("&");
             if (parts.length == 0) {
@@ -58,7 +61,7 @@ public class SendHandler extends WebHandler {
                 return;
             }
             if (parts.length > 1) {
-                logger.warning("Too many parts in request: \"" + message + "\"");
+                logger.warning(() -> "Too many parts in request: \"" + message + "\"");
             }
             String[] messageParts = parts[0].split("=");
             if (messageParts.length != 2) {
@@ -70,8 +73,7 @@ public class SendHandler extends WebHandler {
             addChat(exchange.getRemoteAddress(), chatDecoded);
             sendResponse(exchange, "<p>200 OK: message sent.</p>");
         } catch (Exception e) {
-            logger.warning("Exception processing request!");
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Exception processing request", e);
             sendErrorResponse(exchange, "<p>500 Internal server error: An exception occurred processing the request.</p>");
         }
     }
@@ -88,7 +90,7 @@ public class SendHandler extends WebHandler {
         if (timeout != null && !timeout.finished) {
             canSend = false;
         } else {
-            timeout = new Timeout(plugin.chatDelay);
+            timeout = new Timeout(plugin.getChatDelay());
             timeouts.put(addr, timeout);
         }
 
@@ -116,22 +118,11 @@ public class SendHandler extends WebHandler {
 
         private Timeout(long time) {
             Thread thread = new Thread(() -> {
-                //time remaining as of now
-                long remaining = time;
-                //time that the current loop started
-                long start = System.currentTimeMillis();
-
-                //sleep for time milliseconds
-                do {
-                    try {
-                        Thread.sleep(remaining);
-                        remaining = 0;
-                    } catch (InterruptedException ignored) {
-                        long diff = System.currentTimeMillis() - start;
-                        remaining -= diff;
-                        start = System.currentTimeMillis();
-                    }
-                } while (remaining > 0);
+                try {
+                    Thread.sleep(time);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
 
                 finished = true;
             });

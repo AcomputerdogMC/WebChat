@@ -20,14 +20,18 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
+/**
+ * Plugin main class
+ */
 public class PluginWebChat extends JavaPlugin implements Listener {
     /*
     Delay in milliseconds between chat messages
      */
-    public int chatDelay = 750;
-    public int maxLines = 50;
-    public int webPort = 8080;
+    private int chatDelay = 750;
+    private int maxLines = 50;
+    private int webPort = 8080;
 
     private WebServer webServer;
     private ChatList chatList;
@@ -46,20 +50,13 @@ public class PluginWebChat extends JavaPlugin implements Listener {
             calendar.setTimeZone(TimeZone.getTimeZone("EST"));
 
             getLogger().info("Starting web server...");
-            try {
-                webServer = new WebServer(this);
-                webServer.start();
-            } catch (IOException e) {
-                getLogger().severe("Exception starting web server!");
-                e.printStackTrace();
-                stopServer();
-            }
+            webServer = new WebServer(this);
+            webServer.start();
             getLogger().info("Server started.");
 
             getServer().getPluginManager().registerEvents(this, this);
         } catch (Exception e) {
-            getLogger().severe("Exception during startup!  Plugin will be disabled!");
-            e.printStackTrace();
+            getLogger().log(Level.SEVERE, "Exception during startup.  Plugin will be disabled!", e);
             getServer().getPluginManager().disablePlugin(this);
         }
     }
@@ -85,7 +82,7 @@ public class PluginWebChat extends JavaPlugin implements Listener {
 
         YamlConfiguration conf = new YamlConfiguration();
         conf.load(new File(getDataFolder(), "filter.yml"));
-        chatFilter = new ChatFilter(this, conf);
+        chatFilter = new ChatFilter(conf);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -122,7 +119,7 @@ public class PluginWebChat extends JavaPlugin implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
-        String command = e.getMessage();//getCommand();
+        String command = e.getMessage();
         String cmdName = getCommandName(command).toLowerCase();
         String playerName = e.getPlayer().getName();
         if (cmdName.equals("/say")) {
@@ -156,7 +153,8 @@ public class PluginWebChat extends JavaPlugin implements Listener {
         if (webServer != null) {
             try {
                 webServer.stop();
-            } catch (Throwable ignored) {
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE, "Exception stopping web server", e);
             }
         }
     }
@@ -197,12 +195,6 @@ public class PluginWebChat extends JavaPlugin implements Listener {
     }
 
     private String getCommandName(String command) {
-        if (command == null) {
-            return null;
-        }
-        if (command.isEmpty()) {
-            return "";
-        }
         int idx = command.indexOf(' ');
         if (idx > 0) {
             return command.substring(0, idx);
@@ -212,17 +204,27 @@ public class PluginWebChat extends JavaPlugin implements Listener {
     }
 
     private String getCommandArgs(String command) {
-        if (command == null) {
-            return null;
-        }
-        if (command.isEmpty()) {
-            return "";
-        }
         int idx = command.indexOf(' ');
         if (idx > 0 && idx < command.length() - 1) {
-            return command.substring(idx + 1, command.length());
+            return command.substring(idx + 1);
         } else {
             return null;
         }
+    }
+
+    public int getWebPort() {
+        return webPort;
+    }
+
+    public void stop() {
+        getServer().getPluginManager().disablePlugin(this);
+    }
+
+    public int getChatDelay() {
+        return chatDelay;
+    }
+
+    public int getMaxLines() {
+        return maxLines;
     }
 }

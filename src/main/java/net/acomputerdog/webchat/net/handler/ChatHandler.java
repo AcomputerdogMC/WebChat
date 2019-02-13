@@ -7,6 +7,13 @@ import net.acomputerdog.webchat.net.WebServer;
 
 import java.io.IOException;
 
+/**
+ * Outdated endpoint to retrieve entire chat log
+ *
+ * TODO why is this still here?
+ *
+ * @deprecated Inefficient, use ChatUpdateHandler instead
+ */
 @Deprecated
 public class ChatHandler extends WebHandler {
     private final PluginWebChat plugin;

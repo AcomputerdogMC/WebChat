@@ -2,6 +2,9 @@ package net.acomputerdog.webchat.util;
 
 import java.util.Iterator;
 
+/**
+ * A circular linked list data structure.  When full, new items replace the oldest.
+ */
 public class BoundedSet<T> implements Iterable<T> {
     private final int maxSize;
 

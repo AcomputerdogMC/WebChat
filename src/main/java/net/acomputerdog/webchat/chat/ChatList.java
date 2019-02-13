@@ -6,6 +6,9 @@ import net.acomputerdog.webchat.util.BoundedSet;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 
+/**
+ * Stores list of chat messages
+ */
 public class ChatList {
     private final BoundedSet<String> lines;
     private final Semaphore lock;
@@ -15,7 +18,7 @@ public class ChatList {
     private int version;
 
     public ChatList(PluginWebChat plugin) {
-        lines = new BoundedSet<>(plugin.maxLines);
+        lines = new BoundedSet<>(plugin.getMaxLines());
         lock = new Semaphore(1, true);
         filter = plugin.getChatFilter();
         version = 0;

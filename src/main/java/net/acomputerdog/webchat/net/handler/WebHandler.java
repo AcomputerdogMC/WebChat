@@ -5,7 +5,12 @@ import com.sun.net.httpserver.HttpHandler;
 import net.acomputerdog.webchat.net.WebServer;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
+/**
+ * Abstract parent class of all web API handlers
+ */
 public abstract class WebHandler implements HttpHandler {
     private final WebServer server;
 
@@ -20,17 +25,18 @@ public abstract class WebHandler implements HttpHandler {
     public abstract void handleExchange(HttpExchange exchange) throws IOException;
 
     @Override
-    public final void handle(HttpExchange exchange) throws IOException {
+    public final void handle(HttpExchange exchange) {
         try {
             handleExchange(exchange);
         } catch (Exception e) {
-            server.getLogger().severe("Exception occurred handling HttpExchange!");
-            e.printStackTrace();
+            server.getLogger().log(Level.SEVERE, "Exception occurred handling HttpExchange", e);
         }
+
+        // empty the stream
         try {
-            //read any left over data
-            readMessage(exchange.getRequestBody());
+            exchange.getRequestBody().close();
         } catch (IOException ignored) {
+            // ignored because the stream may already be closed
         }
         exchange.close();
     }
@@ -62,11 +68,12 @@ public abstract class WebHandler implements HttpHandler {
         }
     }
 
-    protected String readMessage(InputStream in) throws IOException {
+    protected String readBodyMessage(HttpExchange exchange) throws IOException {
         StringBuilder builder = new StringBuilder();
-        Reader reader = new InputStreamReader(in, "utf-8");
-        while (reader.ready()) {
-            builder.append((char) reader.read());
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
+            while (reader.ready()) {
+                builder.append(reader.readLine());
+            }
         }
         return builder.toString();
     }

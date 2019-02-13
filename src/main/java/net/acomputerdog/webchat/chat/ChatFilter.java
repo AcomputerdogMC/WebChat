@@ -1,15 +1,15 @@
 package net.acomputerdog.webchat.chat;
 
-import net.acomputerdog.webchat.PluginWebChat;
 import org.bukkit.configuration.Configuration;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Filters chat messages
+ */
 public class ChatFilter {
-    private final PluginWebChat plugin;
-
     private final boolean filterIn;
     private final boolean filterOut;
     private final boolean strictFilter;
@@ -18,8 +18,7 @@ public class ChatFilter {
     private final int maxLineLength;
     private final Pattern[] filterPatterns;
 
-    public ChatFilter(PluginWebChat plugin, Configuration conf) {
-        this.plugin = plugin;
+    public ChatFilter(Configuration conf) {
 
         filterIn = conf.getBoolean("filter_in", true);
         filterOut = conf.getBoolean("filter_out", true);
@@ -71,25 +70,25 @@ public class ChatFilter {
                 int end = matcher.end();
                 int length = end - start;
 
-                String newLine;
+                StringBuilder newLine = new StringBuilder();
                 if (!strictFilter) {
-                    newLine = line.substring(0, start + 1);
+                    newLine.append(line, 0, start + 1);
                     for (int i = 0; i < length - 2; i++) {
-                        newLine = newLine + "*";
+                        newLine.append('*');
                     }
                     if (end > 0 && end <= line.length()) {
-                        newLine += line.substring(end - 1, line.length());
+                        newLine.append(line.substring(end - 1));
                     }
                 } else {
-                    newLine = line.substring(0, start);
+                    newLine.append(line, 0, start);
                     for (int i = 0; i < length; i++) {
-                        newLine = newLine + "*";
+                        newLine.append('*');
                     }
                     if (end < line.length()) {
-                        newLine = line.substring(end);
+                        newLine.append(end);
                     }
                 }
-                line = newLine;
+                line = newLine.toString();
             }
         }
         return line;
