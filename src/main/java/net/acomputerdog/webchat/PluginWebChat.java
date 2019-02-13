@@ -74,7 +74,10 @@ public class PluginWebChat extends JavaPlugin implements Listener {
 
     private void loadConfig() throws IOException, InvalidConfigurationException {
         saveDefaultConfig(); //only saves if it doesn't exist
-        saveResource("filter.yml", false); //only saves if it doesn't exist
+
+        if (!new File(getDataFolder(), "filter.yml").isFile()) {
+            saveResource("filter.yml", false);
+        }
 
         chatDelay = getConfig().getInt("chat_delay", chatDelay);
         maxLines = getConfig().getInt("max_lines", maxLines);
