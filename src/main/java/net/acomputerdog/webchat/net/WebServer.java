@@ -36,7 +36,7 @@ public class WebServer {
             }
         });
         serverThread.setName("web_server");
-        SimpleHandler main = new SimpleHandler(this, getClass().getResource("/main.html").toURI());
+        SimpleHandler main = new SimpleHandler(this, "/main.html");
         server.createContext("/", main);
         server.createContext("/main.html", main);
         server.createContext("/chat", new ChatHandler(this, plugin));

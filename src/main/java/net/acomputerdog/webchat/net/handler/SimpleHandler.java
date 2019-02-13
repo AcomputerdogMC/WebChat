@@ -3,11 +3,11 @@ package net.acomputerdog.webchat.net.handler;
 import com.sun.net.httpserver.HttpExchange;
 import net.acomputerdog.webchat.net.WebServer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 /**
  * API endpoint that returns a hard-coded string reponse
@@ -15,9 +15,12 @@ import java.nio.file.Paths;
 public class SimpleHandler extends WebHandler {
     private final String page;
 
-    public SimpleHandler(WebServer server, URI uri) throws IOException {
+    public SimpleHandler(WebServer server, String resource) throws IOException {
         super(server);
-        this.page = new String(Files.readAllBytes(Paths.get(uri)), StandardCharsets.UTF_8);
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(resource), StandardCharsets.UTF_8))) {
+            this.page = in.lines().collect(Collectors.joining());
+        }
     }
 
     @Override

@@ -3,3 +3,4 @@ version: ${version}
 description: Opens a web server for remote chat access
 author: acomputerdog
 main: net.acomputerdog.webchat.PluginWebChat
+api-version: 1.13
