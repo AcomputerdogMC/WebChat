@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en/us">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge chrome=1">
+        <title>WebChat</title>
+
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <textarea id="chatbox" readonly></textarea>
+        <div id="sendContainer">
+            <input type="text" id="sendText" maxlength="100" onkeydown="onSendKey(event.keyCode)"/>
+            <input type="button" id="sendButton" value="Send" onclick="sendChat()"/>
+        </div>
+
+        <script src="js/chatClient.js"></script>
+    </body>
+</html>

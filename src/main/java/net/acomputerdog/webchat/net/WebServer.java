@@ -2,11 +2,13 @@ package net.acomputerdog.webchat.net;
 
 import com.sun.net.httpserver.HttpServer;
 import net.acomputerdog.webchat.PluginWebChat;
-import net.acomputerdog.webchat.net.handler.*;
+import net.acomputerdog.webchat.net.handler.ChatUpdateHandler;
+import net.acomputerdog.webchat.net.handler.ChatVersionHandler;
+import net.acomputerdog.webchat.net.handler.SendHandler;
+import net.acomputerdog.webchat.net.handler.SimpleHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +21,7 @@ public class WebServer {
     private final Logger logger;
     private final PluginWebChat plugin;
 
-    public WebServer(PluginWebChat plugin) throws IOException, URISyntaxException {
+    public WebServer(PluginWebChat plugin) throws IOException {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         //set timeouts.  Is either 10 or 100 seconds (unsure do to closed source/undocumented code)
@@ -36,10 +38,11 @@ public class WebServer {
             }
         });
         serverThread.setName("web_server");
-        SimpleHandler main = new SimpleHandler(this, "/main.html");
+        SimpleHandler main = new SimpleHandler(this, "/web/main.html");
         server.createContext("/", main);
         server.createContext("/main.html", main);
-        server.createContext("/chat", new ChatHandler(this, plugin));
+        server.createContext("/js/chatClient.js", new SimpleHandler(this, "/web/js/chatClient.js"));
+        server.createContext("/css/main", new SimpleHandler(this, "/web/css/main.css"));
         server.createContext("/updatechat", new ChatUpdateHandler(this, plugin));
         server.createContext("/chatversion", new ChatVersionHandler(this, plugin));
         server.createContext("/send", new SendHandler(this, logger, plugin));

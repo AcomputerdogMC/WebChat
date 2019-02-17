@@ -1,0 +1,42 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    padding: 10px;
+    margin: 0;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+#sendContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: flex-start;
+
+    padding: 0;
+    margin: 10px 0 0;
+
+}
+
+#sendText {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+#sendButton {
+    margin-left: 10px;
+}
+
+#chatbox {
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    resize: none;
+}

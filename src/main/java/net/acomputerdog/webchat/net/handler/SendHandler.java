@@ -45,10 +45,6 @@ public class SendHandler extends WebHandler {
                 sendResponse(exchange, "<p>405 Method not allowed: only POST is accepted.</p>", 405);
                 return;
             }
-            if (!"application/x-www-form-urlencoded".equals(exchange.getRequestHeaders().get("Content-Type").get(0))) {
-                sendResponse(exchange, "<p>406 Not acceptable: wrong Content-Type.</p>", 406);
-                return;
-            }
             if (!checkAndUpdateTimeout(exchange.getRemoteAddress())) {
                 sendResponse(exchange, "<p>429 Too many requests: please wait to send multiple messages.</p>", 429);
                 return;

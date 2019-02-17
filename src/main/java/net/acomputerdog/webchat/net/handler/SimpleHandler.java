@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
- * API endpoint that returns a hard-coded string reponse
+ * API endpoint that returns a hard-coded string response
  */
 public class SimpleHandler extends WebHandler {
     private final String page;
